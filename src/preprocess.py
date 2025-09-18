@@ -55,6 +55,9 @@ class BackgroundLoadSimulator(threading.Thread):
     def stop(self):
         self._running.clear()
 
+# -----------------------------------------------------------------------------
+# Dataset helpers
+# -----------------------------------------------------------------------------
 class RealTimeStreamer(IterableDataset):
     def __init__(self, dataset, transform, target_fps):
         self.dataset = dataset
@@ -94,6 +97,10 @@ class RealTimeStreamer(IterableDataset):
             if sleep_time > 0:
                 time.sleep(sleep_time)
 
+# -----------------------------------------------------------------------------
+# Generic helpers
+# -----------------------------------------------------------------------------
+
 def get_transform(backbone_name):
     model = timm.create_model(backbone_name, pretrained=True)
     data_config = timm.data.resolve_model_data_config(model)
@@ -112,53 +119,70 @@ class SyntheticDataset(Dataset):
     def __getitem__(self, idx):
         image = torch.randn(3, *self.img_size)
         label = torch.randint(0, self.num_classes, (1,)).item()
-        return image, label
+        return {'image': image, 'label': label}
+
+# -----------------------------------------------------------------------------
+# Unified public API
+# -----------------------------------------------------------------------------
+
+def _load_imagenet_c(subset_size):
+    """Load the ImageNet-C parquet conversion from ang9867/ImageNet-C."""
+    try:
+        ds = load_dataset('ang9867/ImageNet-C', split=f"train[:{subset_size}]")
+        return ds
+    except Exception as e:
+        raise RuntimeError("Failed to load ImageNet-C from ang9867/ImageNet-C.") from e
+
+
+def _load_domainnet(subset_size):
+    try:
+        return load_dataset('wltjr1007/DomainNet', split=f"train[:{subset_size}]")
+    except Exception as e:
+        raise RuntimeError("Failed to load DomainNet dataset from wltjr1007/DomainNet.") from e
+
 
 def get_data_stream(config, backbone_name):
+    """Return a PyTorch DataLoader that yields (image, label) batches in real-time."""
     name = config['name']
     batch_size = config['batch_size']
     eta = config.get('eta', 1.0)
     base_fps = 30.0
     target_fps = base_fps * eta
     num_workers = config.get('num_workers', 4)
+    subset_size = config.get('subset_size', '100%')
 
     transform = get_transform(backbone_name)
 
-    if name == 'synthetic':
+    # ------------------------------------------------------------------
+    # Synthetic – trivial path used primarily for unit tests
+    # ------------------------------------------------------------------
+    if name.lower() == 'synthetic':
         dataset = SyntheticDataset()
         return DataLoader(dataset, batch_size=batch_size, num_workers=num_workers)
 
+    # ------------------------------------------------------------------
+    # Real datasets
+    # ------------------------------------------------------------------
     logging.info(f"Loading dataset: {name}")
-    try:
-        if name == 'ImageNet-C':
-            # ImageNet-C needs special handling as it has many subsets
-            corruptions = ['gaussian_noise', 'shot_noise', 'impulse_noise', 'defocus_blur', 'glass_blur',
-                           'motion_blur', 'zoom_blur', 'snow', 'frost', 'fog', 'brightness', 
-                           'contrast', 'elastic_transform', 'pixelate', 'jpeg_compression']
-            severities = [1, 2, 3, 4, 5]
-            all_datasets = []
-            for corruption in corruptions:
-                for severity in severities:
-                    # Load a small subset for smoke tests if specified
-                    split = f"{corruption}_{severity}[:{config.get('subset_size', '100%')}]"
-                    ds = load_dataset('hendrycks/imagenet-c', split=split, trust_remote_code=True)
-                    all_datasets.append(ds)
-            dataset = ChainDataset(all_datasets)
-        elif name == 'DomainNet':
-            dataset = load_dataset('domainnet', split=f"train[:{config.get('subset_size', '100%')}]")
-        elif name == 'Recurring-TTA':
-            inet_s = load_dataset('imagenet_sketch', split=f"train[:{config.get('subset_size_per_cycle', '100%')}]")
-            inet_c_fog = load_dataset('hendrycks/imagenet-c', name='fog', split=f"5[:{config.get('subset_size_per_cycle', '100%')}]", trust_remote_code=True)
-            inet_r = load_dataset('imagenet-r', split=f"train[:{config.get('subset_size_per_cycle', '100%')}]")
-            cycle_datasets = [inet_s, inet_c_fog, inet_r] * 20 # 20 cycles
-            dataset = ChainDataset(cycle_datasets)
-        else:
-            raise ValueError(f"Unknown dataset: {name}")
-    except Exception as e:
-        logging.error(f"Failed to load dataset '{name}'. Please ensure you have the necessary permissions and the dataset exists. Error: {e}")
-        raise RuntimeError(f"Dataset loading failed for '{name}'. Aborting experiment.") from e
+    if name == 'ImageNet-C':
+        dataset = _load_imagenet_c(subset_size)
 
-    # The IterableDataset wrapper handles the real-time simulation
+    elif name == 'DomainNet':
+        dataset = _load_domainnet(subset_size)
+
+    elif name == 'Recurring-TTA':
+        # We approximate the 3-cycle stream with available repos.
+        inet_s = load_dataset('imagenet_sketch', split=f"train[:{subset_size}]")
+        inet_c = _load_imagenet_c(subset_size)
+        inet_r = load_dataset('imagenet-r', split=f"train[:{subset_size}]")
+        cycle_datasets = [inet_s, inet_c, inet_r] * 20  # 20 cycles as before
+        dataset = ChainDataset(cycle_datasets)
+    else:
+        raise ValueError(f"Unknown dataset: {name}")
+
+    # ------------------------------------------------------------------
+    # Wrap inside real-time streamer & DataLoader
+    # ------------------------------------------------------------------
     streamer_dataset = RealTimeStreamer(dataset, transform, target_fps)
 
     return DataLoader(streamer_dataset, batch_size=batch_size, num_workers=num_workers)

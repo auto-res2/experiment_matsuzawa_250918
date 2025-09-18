@@ -18,6 +18,13 @@ from .preprocess import get_data_stream, BackgroundLoadSimulator
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+# -----------------------------------------------------------------------------
+# NOTE – All image & JSON artefacts MUST be written to .research/iteration2/…
+# -----------------------------------------------------------------------------
+BASE_RESULTS_DIR = os.path.join('.research', 'iteration2')
+BASE_IMG_DIR = os.path.join(BASE_RESULTS_DIR, 'images')
+os.makedirs(BASE_IMG_DIR, exist_ok=True)
+
 class SystemStateMonitor:
     def __init__(self, device_id=0):
         try:
@@ -65,16 +72,25 @@ class SystemStateMonitor:
             pynvml.nvmlShutdown()
 
 class MetricsLogger:
-    def __init__(self, output_dir, experiment_name):
-        self.output_dir = output_dir
-        self.img_dir = os.path.join(output_dir, 'images')
-        os.makedirs(self.img_dir, exist_ok=True)
+    """Collects per-batch metrics and writes complete results to JSON + plots.
+    All artefacts are saved inside .research/iteration2 so that CI can pick
+    them up irrespective of the user-provided output_dir in the config."""
+
+    def __init__(self, output_dir: str, experiment_name: str):
+        # Hard-override to the mandatory research directory
+        self.base_dir = BASE_RESULTS_DIR
+        os.makedirs(self.base_dir, exist_ok=True)
+        self.img_dir = BASE_IMG_DIR  # already created at import time
         self.experiment_name = experiment_name
+
         self.metrics = collections.defaultdict(list)
         self.window_metrics = collections.defaultdict(list)
         self.window_size = 500
         self.step = 0
 
+    # ------------------------------------------------------------------
+    # Per-step logging helpers
+    # ------------------------------------------------------------------
     def log_step(self, acc, fps, J, violation, energy_per_img, kl_div):
         self.step += 1
         self.metrics['accuracy'].append(acc)
@@ -102,6 +118,9 @@ class MetricsLogger:
                 mean_val = np.mean(values)
                 logging.info(f"  Avg {key}: {mean_val:.4f}")
 
+    # ------------------------------------------------------------------
+    # Finalisation (writes JSON + plots)
+    # ------------------------------------------------------------------
     def finalize(self):
         summary = {}
         logging.info(f"--- Final Experiment Summary: {self.experiment_name} ---")
@@ -111,7 +130,7 @@ class MetricsLogger:
                 std_val = np.std(values)
                 summary[f'mean_{key}'] = mean_val
                 summary[f'std_{key}'] = std_val
-                logging.info(f"  {key.capitalize()}: {mean_val:.4f} 1 {std_val:.4f}")
+                logging.info(f"  {key.capitalize()}: {mean_val:.4f} ± {std_val:.4f}")
 
         # AUC calculation
         if self.metrics['accuracy'] and self.metrics['fps']:
@@ -125,16 +144,20 @@ class MetricsLogger:
 
         results_data = {'raw': self.metrics, 'summary': summary}
         
-        json_path = os.path.join(self.output_dir, f'{self.experiment_name}_results.json')
+        # --- Persist to JSON (mandatory location) ---
+        json_path = os.path.join(self.base_dir, f'{self.experiment_name}_results.json')
         with open(json_path, 'w') as f:
             json.dump(results_data, f, indent=4)
-        
         logging.info(f"Results saved to {json_path}")
+        # CI visibility (do NOT remove)
         print(json.dumps(results_data, indent=4))
 
         self.plot_results(results_data)
         return results_data
 
+    # ------------------------------------------------------------------
+    # Plot helpers
+    # ------------------------------------------------------------------
     def plot_results(self, results_data):
         sns.set_theme(style="whitegrid")
 
@@ -142,7 +165,8 @@ class MetricsLogger:
         plt.figure(figsize=(10, 6))
         latencies = [1000.0 / f for f in results_data['raw']['fps']]
         accuracies = results_data['raw']['accuracy']
-        sns.scatterplot(x=latencies, y=accuracies, alpha=0.5, label=f"AUC: {results_data['summary']['auc_accuracy_vs_latency']:.2f}")
+        sns.scatterplot(x=latencies, y=accuracies, alpha=0.5,
+                        label=f"AUC: {results_data['summary']['auc_accuracy_vs_latency']:.2f}")
         plt.title(f'Accuracy vs. Latency ({self.experiment_name})')
         plt.xlabel('Latency (ms/image)')
         plt.ylabel('Top-1 Accuracy')
@@ -186,8 +210,7 @@ def run_evaluation(config):
 
     # 3. Setup Monitoring and Logging
     state_monitor = SystemStateMonitor()
-    output_dir = config.get('output_dir', '.research/iteration1')
-    metrics_logger = MetricsLogger(output_dir, config['name'])
+    metrics_logger = MetricsLogger(config.get('output_dir', BASE_RESULTS_DIR), config['name'])
 
     # 4. Evaluation Loop
     total_correct = 0
