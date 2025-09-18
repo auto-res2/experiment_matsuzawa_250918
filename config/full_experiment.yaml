@@ -1,0 +1,143 @@
+run_name: "full_experiment_fast_la_tta"
+seed: 42
+device: "cuda"
+output_dir: ".research/iteration1"
+
+logging:
+  enabled: false # Keep false to prevent mandatory login, user can enable it.
+  wandb_project: "fast-la-tta-publication"
+
+training:
+  enabled: true
+  artifacts_dir: ".research/iteration1/artifacts/full_experiment"
+  batch_size: 64
+  hyperparameters:
+    learning_rate: 0.0003
+    ppo_epochs: 4
+    lambda: 0.05 # Chosen from grid search as per paper
+
+evaluation:
+  enabled: true
+  experiments:
+    # EXPERIMENT 1 0 Streaming Real-Time Slack Coupling Test
+    - name: "exp1_slack_coupling_resnet50_eta1.0_load0.3"
+      eval_steps: None # Run on the full dataset
+      seed: 42
+      model:
+        backbone_name: "resnet50.a1_in1k"
+      dataset:
+        name: "ImageNet-C"
+        batch_size: 1
+        eta: 1.0
+        background_gpu_load: 0.3
+      safety_envelope:
+        enabled: true
+        epsilon: 0.04
+    - name: "exp1_slack_coupling_convnext_eta0.5_load0.7"
+      eval_steps: null
+      seed: 84
+      model:
+        backbone_name: "convnext_tiny.fb_in22k_ft_in1k"
+      dataset:
+        name: "ImageNet-C"
+        batch_size: 1
+        eta: 0.5
+        background_gpu_load: 0.7
+      safety_envelope:
+        enabled: true
+        epsilon: 0.04
+    - name: "exp1_slack_coupling_vit_eta0.25_load0.0"
+      eval_steps: null
+      seed: 126
+      model:
+        backbone_name: "vit_base_patch16_224.augreg2_in21k_ft_in1k"
+      dataset:
+        name: "ImageNet-C"
+        batch_size: 1
+        eta: 0.25
+        background_gpu_load: 0.0
+      safety_envelope:
+        enabled: true
+        epsilon: 0.04
+    
+    # EXPERIMENT 2 0 Cross-Layer Offset Ablation
+    - name: "exp2_ablation_vit_full"
+      eval_steps: null
+      seed: 42
+      variant: "full"
+      model:
+        backbone_name: "vit_base_patch16_224.augreg2_in21k_ft_in1k"
+      dataset:
+        name: "DomainNet"
+        batch_size: 1
+        eta: 0.5
+      safety_envelope:
+        enabled: true
+        epsilon: 0.04
+    - name: "exp2_ablation_vit_norm_only"
+      eval_steps: null
+      seed: 42
+      variant: "norm_only"
+      model:
+        backbone_name: "vit_base_patch16_224.augreg2_in21k_ft_in1k"
+      dataset:
+        name: "DomainNet"
+        batch_size: 1
+        eta: 0.5
+      safety_envelope:
+        enabled: true
+        epsilon: 0.04
+    - name: "exp2_ablation_convnext_full"
+      eval_steps: null
+      seed: 42
+      variant: "full"
+      model:
+        backbone_name: "convnext_tiny.fb_in22k_ft_in1k"
+      dataset:
+        name: "DomainNet"
+        batch_size: 1
+        eta: 0.5
+      safety_envelope:
+        enabled: true
+        epsilon: 0.04
+    - name: "exp2_ablation_convnext_conv_only"
+      eval_steps: null
+      seed: 42
+      variant: "conv_only"
+      model:
+        backbone_name: "convnext_tiny.fb_in22k_ft_in1k"
+      dataset:
+        name: "DomainNet"
+        batch_size: 1
+        eta: 0.5
+      safety_envelope:
+        enabled: true
+        epsilon: 0.04
+
+    # EXPERIMENT 3 0 Long-Horizon Stability & Certificate Validation
+    - name: "exp3_stability_cert_ON"
+      eval_steps: null
+      seed: 42
+      model:
+        backbone_name: "resnet50.a1_in1k"
+      dataset:
+        name: "Recurring-TTA"
+        batch_size: 1
+        eta: 1.0
+        background_gpu_load: 0.0
+      safety_envelope:
+        enabled: true
+        epsilon: 0.04
+    - name: "exp3_stability_cert_OFF"
+      eval_steps: null
+      seed: 42
+      model:
+        backbone_name: "resnet50.a1_in1k"
+      dataset:
+        name: "Recurring-TTA"
+        batch_size: 1
+        eta: 1.0
+        background_gpu_load: 0.0
+      safety_envelope:
+        enabled: false
+        epsilon: 0.04

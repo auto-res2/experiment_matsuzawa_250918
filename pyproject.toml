@@ -1,1 +1,36 @@
-# Please list the required python packages.
+[project]
+name = "fast-la-tta-research"
+version = "0.1.0"
+description = "Implementation of FAST-LA-TTA for research experiments."
+authors = [{name = "AI Researcher", email = "researcher@example.com"}]
+requires-python = ">=3.8"
+dependencies = [
+    "torch>=2.1.0",
+    "torchvision>=0.16.0",
+    "timm>=0.9.12",
+    "transformers>=4.35.0",
+    "datasets>=2.15.0",
+    "numpy>=1.24.0",
+    "pyyaml>=6.0",
+    "pynvml>=11.5.0",
+    "psutil>=5.9.0",
+    "fvcore>=0.1.5",
+    "wandb>=0.15.0",
+    "scikit-learn>=1.3.0",
+    "matplotlib>=3.7.0",
+    "seaborn>=0.13.0",
+    # Assuming CUDA 12.x environment. User might need to change this.
+    "cupy-cuda12x>=12.0.0",
+    "typer[all]>=0.9.0",
+    "tqdm>=4.66.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "black",
+    "ruff"
+]
+
+[tool.setuptools]
+packages = ["src"]
