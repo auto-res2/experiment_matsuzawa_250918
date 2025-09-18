@@ -6,5 +6,82 @@
     "parallel GAT training",
     "approximate attention GNN",
     "quantized graph attention"
+  ],
+  "research_study_list": [
+    {
+      "title": "GACT: Activation Compressed Training for Generic Network Architectures"
+    },
+    {
+      "title": "GACT: Activation Compressed Training for Generic Network Architectures"
+    },
+    {
+      "title": "Generative Teaching Networks: Accelerating Neural Architecture Search by Learning to Generate Synthetic Training Data"
+    },
+    {
+      "title": "Accelerating Transformer Pre-training with 2:4 Sparsity"
+    },
+    {
+      "title": "Transformer Quality in Linear Time"
+    },
+    {
+      "title": "SAC: Accelerating and Structuring Self-Attention via Sparse Adaptive Connection"
+    },
+    {
+      "title": "Adaptive Structural Fingerprints for Graph Attention Networks"
+    },
+    {
+      "title": "Transformers meet Stochastic Block Models: Attention with Data-Adaptive Sparsity and Cost"
+    },
+    {
+      "title": "A Flexible, Equivariant Framework for Subgraph GNNs via Graph Products and Graph Coarsening"
+    },
+    {
+      "title": "Efficient Attention via Control Variates"
+    },
+    {
+      "title": "Dynamic Rescaling for Training GNNs"
+    },
+    {
+      "title": "Bandit Samplers for Training Graph Neural Networks"
+    },
+    {
+      "title": "Graph Ladling: Shockingly Simple Parallel GNN Training without Intermediate Communication"
+    },
+    {
+      "title": "Are GATs Out of Balance?"
+    },
+    {
+      "title": "GBA: A Tuning-free Approach to Switch between Synchronous and Asynchronous Training for Recommendation Models"
+    },
+    {
+      "title": "Sketch-GNN: Scalable Graph Neural Networks with Sublinear Training Complexity"
+    },
+    {
+      "title": "HyperAttention: Long-context Attention in Near-Linear Time"
+    },
+    {
+      "title": "RSC: Accelerate Graph Neural Networks Training via Randomized Sparse Computations"
+    },
+    {
+      "title": "Bandit Samplers for Training Graph Neural Networks"
+    },
+    {
+      "title": "KDEformer: Accelerating Transformers via Kernel Density Estimation"
+    },
+    {
+      "title": "Degree-Quant: Quantization-Aware Training for Graph Neural Networks"
+    },
+    {
+      "title": "$\\rm A^2Q$: Aggregation-Aware Quantization for Graph Neural Networks"
+    },
+    {
+      "title": "Quantizable Transformers: Removing Outliers by Helping Attention Heads Do Nothing"
+    },
+    {
+      "title": "Generalizing CNNs to graphs with learnable neighborhood quantization"
+    },
+    {
+      "title": "VQ-GNN: A Universal Framework to Scale up Graph Neural Networks using Vector Quantization"
+    }
   ]
 }
