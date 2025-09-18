@@ -30,48 +30,36 @@ class QScatter(torch.autograd.Function):
         value, index, attention_weights = ctx.saved_tensors
         k, bit, dim_size, cv_cache = ctx.k, ctx.bit, ctx.dim_size, ctx.cv_cache
         
-        if k >= value.shape[0]: # If k is larger than all edges, do full backprop
+        if k >= value.shape[0]:  # If k is larger than all edges, do full backprop
             return grad_out[index], None, None, None, None, None, None
 
         # 1. Importance Score Calculation
         # score = ||grad_i|| * alpha_ij
         grad_norm = torch.norm(grad_out[index], p=2, dim=1)
-        score = (grad_norm * attention_weights).cpu() + 1e-12 # Add epsilon for numerical stability
+        score = (grad_norm * attention_weights).cpu() + 1e-12  # Add epsilon for numerical stability
 
         # 2. Top-k Edge Sampling via Multinomial Sampling
-        # Using replacement=False is slow, multinomial with replacement is a good approx.
-        # Horvitz-Thompson requires non-replacement, but we'll use a fast approximation.
         num_edges = score.shape[0]
         k = min(k, num_edges)
         topk_indices = torch.multinomial(score, k, replacement=False)
         
         # 3. Horvitz-Thompson Scaling
-        # The probability of selection is proportional to the score.
         pi_i = score / score.sum()
-        # For without-replacement, this is complex. We approximate with with-replacement weights.
         scale_factor = 1.0 / (k * pi_i[topk_indices])
         scale_factor = scale_factor.to(value.device)
 
         # 4. On-the-fly Quantization & Dequantization for selected values
         sampled_values = value[topk_indices]
-        
         if bit in [4, 8]:
-            # Degree-aware scale: use 99.9th percentile of the sampled values
-            scale = torch.kthvalue(sampled_values.abs().view(-1), int(0.999 * sampled_values.numel()))[0]
-            scale = scale + 1e-8 # Avoid division by zero
-            
-            min_val = -(2**(bit - 1))
-            max_val = 2**(bit - 1) - 1
-            
+            scale = torch.kthvalue(sampled_values.abs().view(-1), max(1, int(0.999 * sampled_values.numel())))[0]
+            scale = scale + 1e-8  # Avoid division by zero
+            min_val = -(2 ** (bit - 1))
+            max_val = 2 ** (bit - 1) - 1
             quantized_values = (sampled_values / scale).round().clamp(min_val, max_val)
             dequantized_values = quantized_values * scale
-            
-            # Rao-Blackwellised estimator: In this simplified form, the unbiased dequantization serves this role.
-            # The core idea is that E[dequant(quant(v))] = v if rounding is unbiased.
-            # Here we just use the dequantized values.
             v_for_grad = dequantized_values
-        else: # bit == 16, use float16
-            v_for_grad = sampled_values.half().float()
+        else:  # bit == 16 or 32
+            v_for_grad = sampled_values.half().float() if bit == 16 else sampled_values
         
         # 5. Gradient Estimation
         grad_est = torch.zeros_like(value)
@@ -96,16 +84,23 @@ class CustomGATv2Conv(GATv2Conv):
         self.bit = 16
         self.cv_cache = {'prev_grad': None}
 
-    def aggregate(self, inputs, index, ptr=None, dim_size=None):
-        # inputs are alpha * v_j
-        self.alpha_for_backward = self.alpha.squeeze(-1).detach()
+    def aggregate(self, inputs, index, ptr=None, dim_size=None):  # pylint: disable=arguments-differ
+        # PyG stores attention weights as _alpha
+        att_source = getattr(self, 'alpha', None)
+        if att_source is None:
+            att_source = getattr(self, '_alpha', None)
+        if att_source is None:
+            raise RuntimeError('Attention weights not found in GATv2Conv. Upgrade PyG or adjust attribute name.')
+
+        self.alpha_for_backward = att_source.squeeze(-1).detach()
+
         if self.mode == 'fp32':
             return scatter_add(inputs, index, dim=self.node_dim, dim_size=dim_size)
         elif self.mode == 'q_scatter':
             return QScatter.apply(inputs, index, dim_size, self.k, self.bit, self.alpha_for_backward, self.cv_cache)
-        elif self.mode == 'faster_gat': # Sampling only
+        elif self.mode == 'faster_gat':  # Sampling only
             return QScatter.apply(inputs, index, dim_size, self.k, 32, self.alpha_for_backward, self.cv_cache)
-        elif self.mode == 'degree_quant': # Quantization only
+        elif self.mode == 'degree_quant':  # Quantization only
             num_edges = inputs.shape[0]
             return QScatter.apply(inputs, index, dim_size, num_edges, 8, self.alpha_for_backward, self.cv_cache)
         else:
@@ -162,7 +157,7 @@ class DeepGAT(torch.nn.Module):
         for i in range(len(self.convs)):
             x_skip = self.skips[i](x)
             x = self.convs[i](x, edge_index)
-            x = x + x_skip # Balanced init / residual connection
+            x = x + x_skip  # Residual connection
             if i < len(self.convs) - 1:
                 x = F.elu(x)
                 x = F.dropout(x, p=0.5, training=self.training)
@@ -171,14 +166,7 @@ class DeepGAT(torch.nn.Module):
 class GATE(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, out_channels, num_layers, mode='fp32', k=128, bit=8):
         super().__init__()
-        self.convs = torch.nn.ModuleList()
-        for i in range(num_layers):
-            in_dim = in_channels if i == 0 else hidden_channels
-            out_dim = out_channels if i == num_layers - 1 else hidden_channels
-            self.convs.append(GatedGraphConv(in_dim, out_dim))
-        # NOTE: GatedGraphConv doesn't fit the Q-SCATTER model as easily.
-        # We will use a standard GNN here as a placeholder for GATE's specific architecture,
-        # applying Q-SCATTER to a GAT model instead for this experiment.
+        # Placeholder: use GATv2 under the hood for Q-SCATTER compatibility
         logging.warning("GATE model is approximated with a GATv2 for Q-SCATTER compatibility.")
         self.model = GATv2(in_channels, hidden_channels, out_channels, num_layers, heads=4, mode=mode, k=k, bit=bit)
     
@@ -187,7 +175,6 @@ class GATE(torch.nn.Module):
 
     def forward(self, x, edge_index):
         return self.model(x, edge_index)
-
 
 class BanditController:
     def __init__(self, k_vals, b_vals, h_vals, num_layers, gamma=0.07):
@@ -200,7 +187,7 @@ class BanditController:
         self.num_layers = num_layers
         self.gamma = gamma
         self.weights = torch.ones(num_layers, self.num_arms)
-        self.arm_pmfs = [] # To store for inference
+        self.arm_pmfs = []  # To store for inference
 
     def select_arm(self, layer_idx):
         p = (1 - self.gamma) * (self.weights[layer_idx] / self.weights[layer_idx].sum()) + self.gamma / self.num_arms
@@ -208,7 +195,6 @@ class BanditController:
         return self.arms[arm_idx], arm_idx, p[arm_idx]
 
     def update_weights(self, layer_idx, arm_idx, prob, mse, energy):
-        # Reward: Lower is better. Inverse of weighted cost.
         reward = 1.0 / (mse * energy + 1e-8)
         estimated_reward = reward / prob
         self.weights[layer_idx, arm_idx] *= torch.exp(self.gamma * estimated_reward / self.num_arms)
@@ -228,7 +214,7 @@ def get_model(config, data, device):
     elif model_name == 'deepgat':
         model = DeepGAT(num_features, model_params['hidden_channels'], num_classes, model_params['num_layers'], model_params['heads'])
     elif model_name == 'gate':
-        model = GATE(num_features, model_params['hidden_channels'], num_classes, 3) # GATE layers fixed to 3 as per design
+        model = GATE(num_features, model_params['hidden_channels'], num_classes, 3)
     else:
         raise ValueError(f"Unknown model: {model_name}")
     return model.to(device)
@@ -255,15 +241,15 @@ def run_training(config, data_path, output_dir):
             
             logging.info(f"Training model variant: {model_variant} with seed: {seed}")
             model = get_model(config, data, device)
-            k_val, bit_val = 128, 8 # Defaults
+            k_val, bit_val = 128, 8  # Defaults
             if model_variant == 'q_scatter':
                 model.set_mode('q_scatter', k=k_val, bit=bit_val)
             elif model_variant == 'faster_gat':
                 model.set_mode('faster_gat', k=k_val, bit=16)
             elif model_variant == 'degree_quant':
-                model.set_mode('degree_quant', k=data.num_edges, bit=8)
-            else: # fp32
-                model.set_mode('fp32', k=data.num_edges, bit=32)
+                model.set_mode('degree_quant', k=data.edge_index.size(1), bit=8)
+            else:  # fp32
+                model.set_mode('fp32', k=data.edge_index.size(1), bit=32)
 
             optimizer = torch.optim.AdamW(model.parameters(), lr=config['training']['lr'], weight_decay=config['training']['weight_decay'])
             scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=config['training']['epochs'])
@@ -271,7 +257,8 @@ def run_training(config, data_path, output_dir):
             bandit_controller = None
             if model_variant == 'q_scatter' and config['exp2']['enabled']:
                 exp2_params = config['exp2']['bandit_params']
-                bandit_controller = BanditController(exp2_params['k_vals'], exp2_params['b_vals'], [1.0], model.model.num_layers if hasattr(model,'model') else len(model.convs))
+                num_layers = len(model.convs) if hasattr(model, 'convs') else 1
+                bandit_controller = BanditController(exp2_params['k_vals'], exp2_params['b_vals'], [1.0], num_layers)
 
             training_log = []
             for epoch in range(1, config['training']['epochs'] + 1):
@@ -279,7 +266,6 @@ def run_training(config, data_path, output_dir):
                 epoch_start_time = time.time()
                 energy_start = pynvml.nvmlDeviceGetTotalEnergyConsumption(handle)
                 
-                # Dummy forward/backward for one batch
                 optimizer.zero_grad()
                 out = model(data.x, data.edge_index)
                 loss = F.cross_entropy(out[data.train_mask], data.y[data.train_mask])
@@ -289,12 +275,11 @@ def run_training(config, data_path, output_dir):
 
                 energy_end = pynvml.nvmlDeviceGetTotalEnergyConsumption(handle)
                 epoch_duration = time.time() - epoch_start_time
-                epoch_energy = (energy_end - energy_start) / 1e3 # Joules
+                epoch_energy = (energy_end - energy_start) / 1e3  # Joules
                 
                 mem_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
                 peak_vram = mem_info.used / (1024 ** 2)
 
-                # Validation
                 model.eval()
                 with torch.no_grad():
                     val_out = model(data.x, data.edge_index)
@@ -316,7 +301,6 @@ def run_training(config, data_path, output_dir):
                 if epoch % 10 == 0:
                     logging.info(f"Epoch {epoch:02d}: Loss={loss:.4f}, Val Acc={val_acc:.4f}, Time={epoch_duration:.2f}s, VRAM={peak_vram:.0f}MB")
             
-            # Save model and logs
             model_dir = os.path.join(output_dir, 'models', config['model']['name'])
             os.makedirs(model_dir, exist_ok=True)
             model_filename = f"{model_variant}_seed{seed}.pt"
@@ -337,7 +321,6 @@ def run_training(config, data_path, output_dir):
     pynvml.nvmlShutdown()
     if config['exp2']['enabled']:
         try:
-            # Attempt to reset power limit. May require sudo.
             os.system(f"sudo nvidia-smi -i 0 -pl {pynvml.nvmlDeviceGetPowerManagementDefaultLimit(handle)/1000}")
         except Exception:
             pass

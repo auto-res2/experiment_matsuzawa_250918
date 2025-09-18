@@ -26,13 +26,10 @@ def main():
     with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
     
-    # Create output directories
     output_dir = config['paths']['output_dir']
     os.makedirs(output_dir, exist_ok=True)
-    os.makedirs(os.path.join(output_dir, '.research', 'iteration1', 'images'), exist_ok=True)
+    os.makedirs(os.path.join(output_dir, '.research', 'iteration2', 'images'), exist_ok=True)
 
-    # Set seeds for reproducibility
-    # Note: A single seed is used for simplicity, though config supports multiple
     seed = config['seeds'][0]
     torch.manual_seed(seed)
     np.random.seed(seed)
@@ -41,13 +38,10 @@ def main():
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
 
-    # --- Stage 1: Preprocessing ---
     processed_data_path = preprocess.run_preprocessing(config)
 
-    # --- Stage 2: Training ---
     train.run_training(config, processed_data_path, output_dir)
 
-    # --- Stage 3: Evaluation ---
     evaluate.run_evaluation(config, processed_data_path, output_dir)
 
     logging.info("Experiment run finished successfully.")
