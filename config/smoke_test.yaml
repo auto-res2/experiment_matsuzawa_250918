@@ -1,0 +1,37 @@
+project_name: 'q_scatter_smoke_test'
+
+seeds: [42]
+
+paths:
+  data_dir: 'data/'
+  output_dir: 'output/smoke_test/'
+
+dataset:
+  name: 'reddit' # Smallest dataset
+
+model:
+  name: 'gatv2'
+  num_layers: 2
+  hidden_channels: 128
+  heads: 2
+
+training:
+  epochs: 2
+  lr: 0.005
+  weight_decay: 0.0005
+  batch_size: 1024
+
+exp1:
+  enabled: true
+  models_to_run: ['fp32', 'q_scatter']
+
+exp2:
+  enabled: true
+  power_limit_w: 150
+  bandit_params:
+    k_vals: [64, 128]
+    b_vals: [4, 8]
+
+exp3:
+  enabled: true
+  dataset_for_exp: 'ogbn-proteins' # This is just a placeholder name for the config structure

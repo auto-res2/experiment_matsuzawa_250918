@@ -1,1 +1,31 @@
-# Please list the required python packages.
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "q_scatter_research"
+version = "0.1.0"
+description = "Experiments for Q-SCATTER GNN acceleration."
+authors = [{name = "AI Researcher", email = "researcher@example.com"}]
+readme = "README.md"
+requires-python = ">=3.8"
+
+dependencies = [
+    "torch>=2.1.0",
+    "torch_geometric>=2.4.0",
+    "torch-scatter>=2.1.2",
+    "ogb>=1.3.6",
+    "pyyaml>=6.0",
+    "pandas>=2.0.0",
+    "scikit-learn>=1.2.0",
+    "matplotlib>=3.7.0",
+    "seaborn>=0.12.0",
+    "pynvml>=11.5.0",
+    "ptflops>=0.6.9",
+    "requests>=2.28.0",
+    "tqdm>=4.64.0",
+    "numpy>=1.23.0"
+]
+
+[project.scripts]
+run_experiment = "src.main:main"

@@ -1,0 +1,61 @@
+project_name: 'q_scatter_full_experiment'
+
+seeds: [11, 12, 13]
+
+paths:
+  data_dir: 'data/'
+  output_dir: 'output/full_experiment/'
+
+dataset:
+  name: 'ogbn-products' # Default dataset, can be overridden per experiment
+  friendster:
+    url: 'https://snap.stanford.edu/data/com-friendster.ungraph.txt.gz'
+    md5: '433a9629f131a423984b76b21612040c' # MD5 of the com-friendster.ungraph.txt.gz file
+
+model:
+  name: 'gatv2' # Default model
+  hidden_channels: 256
+  heads: 4
+  # Specific model configs
+  gatv2:
+    num_layers: 2
+  deepgat:
+    num_layers: 6
+  gate:
+    num_layers: 3
+
+training:
+  epochs: 50
+  lr: 0.0025
+  weight_decay: 0.001
+  # Batch sizes per dataset
+  batch_sizes:
+    reddit: 4000
+    ogbn-products: 25000
+    friendster: 64000
+
+exp1:
+  enabled: true
+  # This experiment will be run for each combination of dataset and model
+  datasets: ['reddit', 'ogbn-products', 'friendster']
+  models: ['gatv2', 'deepgat', 'gate']
+  models_to_run: ['fp32', 'faster_gat', 'degree_quant', 'q_scatter']
+
+exp2:
+  enabled: true
+  dataset: 'ogbn-products'
+  model: 'deepgat'
+  power_limit_w: 150
+  energy_budgets_factor: [0.5, 1.0, 1.5, 2.0] # Factor of FP32 energy
+  epochs: 10 # 5 warmup, 5 measurement
+  bandit_params:
+    k_vals: [32, 64, 128, 256]
+    b_vals: [4, 8, 16]
+    gamma: 0.07
+
+exp3:
+  enabled: true
+  dataset: 'ogbn-proteins' # Note: Preprocessing for this is not in scope, so we use main dataset
+  model: 'gatv2'
+  inference_batches: 1000
+  batch_size: 8000
