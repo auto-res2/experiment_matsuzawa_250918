@@ -64,10 +64,6 @@ class MultiGranularHyperAdapter(nn.Module):
         info['norm_layers'] = []
         info['attn_layers'] = []
         info['conv_layers'] = []
-        # Initialize param counters to ensure they exist in the dict
-        info['norm_params'] = 0
-        info['attn_params'] = 0
-        info['conv_params'] = 0
 
         for name, mod in backbone.named_modules():
             if isinstance(mod, (nn.BatchNorm2d, nn.LayerNorm)):
@@ -121,7 +117,7 @@ class FASTLATTAModel(nn.Module):
         for param in self.backbone_features.parameters():
             param.requires_grad = False
 
-        self.adapter = MultiGranularHyperAdapter(self.backbone_name, self.backbone_features)
+        self.adapter = MultiGranularHyperAdapter(self.backbone_name, self.backbone)
         
         self.K = len(self.adapter.target_modules_info.get('norm_layers', [])) + \
                  len(self.adapter.target_modules_info.get('attn_layers', [])) + \
