@@ -6,5 +6,82 @@
     "Online Test-Time Adaptation",
     "Adaptive learning rate TTA",
     "Meta-learning TTA convergence"
+  ],
+  "research_study_list": [
+    {
+      "title": "Improved Test-Time Adaptation for Domain Generalization"
+    },
+    {
+      "title": "Active Test-Time Adaptation: Theoretical Analyses and An Algorithm"
+    },
+    {
+      "title": "Robust Test-Time Adaptation in Dynamic Scenarios"
+    },
+    {
+      "title": "Leveraging Proxy of Training Data for Test-Time Adaptation"
+    },
+    {
+      "title": "Test-Time Training with Self-Supervision for Generalization under Distribution Shifts"
+    },
+    {
+      "title": "Robust Test-Time Adaptation in Dynamic Scenarios"
+    },
+    {
+      "title": "TTN: A Domain-Shift Aware Batch Normalization in Test-Time Adaptation"
+    },
+    {
+      "title": "Test-Time Training with Self-Supervision for Generalization under Distribution Shifts"
+    },
+    {
+      "title": "Improved Test-Time Adaptation for Domain Generalization"
+    },
+    {
+      "title": "Active Test-Time Adaptation: Theoretical Analyses and An Algorithm"
+    },
+    {
+      "title": "Test-Time Training with Self-Supervision for Generalization under Distribution Shifts"
+    },
+    {
+      "title": "Protected Test-Time Adaptation via Online Entropy Matching: A Betting Approach"
+    },
+    {
+      "title": "Evaluation of Test-Time Adaptation Under Computational Time Constraints"
+    },
+    {
+      "title": "Robust Test-Time Adaptation in Dynamic Scenarios"
+    },
+    {
+      "title": "DELTA: DEGRADATION-FREE FULLY TEST-TIME ADAPTATION"
+    },
+    {
+      "title": "Improved Test-Time Adaptation for Domain Generalization"
+    },
+    {
+      "title": "Active Test-Time Adaptation: Theoretical Analyses and An Algorithm"
+    },
+    {
+      "title": "Test Time Adaptation via Conjugate Pseudo-labels"
+    },
+    {
+      "title": "Diffusion-TTA: Test-time Adaptation of Discriminative Models via Generative Feedback"
+    },
+    {
+      "title": "Robust Test-Time Adaptation in Dynamic Scenarios"
+    },
+    {
+      "title": "Test Time Adaptation via Conjugate Pseudo-labels"
+    },
+    {
+      "title": "Improved Test-Time Adaptation for Domain Generalization"
+    },
+    {
+      "title": "Active Test-Time Adaptation: Theoretical Analyses and An Algorithm"
+    },
+    {
+      "title": "Persistent Test-time Adaptation in Recurring Testing Scenarios"
+    },
+    {
+      "title": "AETTA: Label-Free Accuracy Estimation for Test-Time Adaptation"
+    }
   ]
 }
