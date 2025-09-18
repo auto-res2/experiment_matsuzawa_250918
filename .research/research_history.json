@@ -6,5 +6,82 @@
     "parallel GAT training",
     "sparse attention acceleration",
     "quantized GAT"
+  ],
+  "research_study_list": [
+    {
+      "title": "Are GATs Out of Balance?"
+    },
+    {
+      "title": "Bandit Samplers for Training Graph Neural Networks"
+    },
+    {
+      "title": "Dynamic Rescaling for Training GNNs"
+    },
+    {
+      "title": "Transformer Quality in Linear Time"
+    },
+    {
+      "title": "Transformer Quality in Linear Time"
+    },
+    {
+      "title": "Are GATs Out of Balance?"
+    },
+    {
+      "title": "Dynamic Rescaling for Training GNNs"
+    },
+    {
+      "title": "Bandit Samplers for Training Graph Neural Networks"
+    },
+    {
+      "title": "GATE: How to Keep Out Intrusive Neighbors"
+    },
+    {
+      "title": "Adaptive Structural Fingerprints for Graph Attention Networks"
+    },
+    {
+      "title": "Dynamic Rescaling for Training GNNs"
+    },
+    {
+      "title": "Bandit Samplers for Training Graph Neural Networks"
+    },
+    {
+      "title": "Graph Ladling: Shockingly Simple Parallel GNN Training without Intermediate Communication"
+    },
+    {
+      "title": "Are GATs Out of Balance?"
+    },
+    {
+      "title": "GBA: A Tuning-free Approach to Switch between Synchronous and Asynchronous Training for Recommendation Models"
+    },
+    {
+      "title": "Fast Attention Over Long Sequences With Dynamic Sparse Flash Attention"
+    },
+    {
+      "title": "Low-Rank Approximation for Sparse Attention in Multi-Modal LLMs"
+    },
+    {
+      "title": "Accelerating Sparse Convolution with Column Vector-Wise Sparsity"
+    },
+    {
+      "title": "SAC: Accelerating and Structuring Self-Attention via Sparse Adaptive Connection"
+    },
+    {
+      "title": "Sparse is Enough in Scaling Transformers"
+    },
+    {
+      "title": "Quantizable Transformers: Removing Outliers by Helping Attention Heads Do Nothing"
+    },
+    {
+      "title": "GATE: How to Keep Out Intrusive Neighbors"
+    },
+    {
+      "title": "GraphQNTK: Quantum Neural Tangent Kernel for Graph Data"
+    },
+    {
+      "title": "Are GATs Out of Balance?"
+    },
+    {
+      "title": "Generalizing CNNs to graphs with learnable neighborhood quantization"
+    }
   ]
 }
