@@ -1,0 +1,162 @@
+/home/toma/pt-80-1-a-13/_work/experiment_matsuzawa_250918/experiment_matsuzawa_250918/.venv/lib/python3.11/site-packages/torch/cuda/__init__.py:63: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+[31m╭─[0m[31m────────────────────[0m[31m [0m[1;31mTraceback [0m[1;2;31m(most recent call last)[0m[31m [0m[31m─────────────────────[0m[31m─╮[0m
+[31m│[0m [2m/home/toma/pt-80-1-a-13/_work/experiment_matsuzawa_250918/experiment_matsuza[0m [31m│[0m
+[31m│[0m [2mwa_250918/src/[0m[1mmain.py[0m:33 in main                                             [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m   [2m30 [0m[2m│   │   [0mlogging.error([33mf[0m[33m"[0m[33mConfiguration file not found at [0m[33m{[0mconfig_path[33m}[0m[33m"[0m) [31m│[0m
+[31m│[0m   [2m31 [0m[2m│   │   [0m[94mraise[0m typer.Exit(code=[94m1[0m)                                        [31m│[0m
+[31m│[0m   [2m32 [0m[2m│   [0m                                                                    [31m│[0m
+[31m│[0m [31m❱ [0m33 [2m│   [0mconfig = [1;4mload_config([0m[1;4;96mstr[0m[1;4m(config_path))[0m                              [31m│[0m
+[31m│[0m   [2m34 [0m[2m│   [0mlogging.info([33mf[0m[33m"[0m[33mLoaded configuration from [0m[33m{[0mconfig_path[33m}[0m[33m"[0m)            [31m│[0m
+[31m│[0m   [2m35 [0m[2m│   [0m                                                                    [31m│[0m
+[31m│[0m   [2m36 [0m[2m│   [0m[2m# Setup environment[0m                                                 [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m [34m╭─[0m[34m─────────────────────────[0m[34m locals [0m[34m─────────────────────────[0m[34m─╮[0m               [31m│[0m
+[31m│[0m [34m│[0m     [3;33mconfig_path[0m[31m =[0m [1;35mPosixPath[0m[1m([0m[32m'config/full_experiment.yaml'[0m[1m)[0m [34m│[0m               [31m│[0m
+[31m│[0m [34m│[0m [3;33mfull_experiment[0m[31m =[0m [3;92mTrue[0m                                     [34m│[0m               [31m│[0m
+[31m│[0m [34m│[0m      [3;33msmoke_test[0m[31m =[0m [3;91mFalse[0m                                    [34m│[0m               [31m│[0m
+[31m│[0m [34m╰────────────────────────────────────────────────────────────╯[0m               [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m [2m/home/toma/pt-80-1-a-13/_work/experiment_matsuzawa_250918/experiment_matsuza[0m [31m│[0m
+[31m│[0m [2mwa_250918/src/[0m[1mmain.py[0m:17 in load_config                                      [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m   [2m14 [0m                                                                        [31m│[0m
+[31m│[0m   [2m15 [0m[94mdef[0m[90m [0m[92mload_config[0m(config_path: [96mstr[0m) -> [96mdict[0m:                              [31m│[0m
+[31m│[0m   [2m16 [0m[2m│   [0m[94mwith[0m [96mopen[0m(config_path, [33m'[0m[33mr[0m[33m'[0m) [94mas[0m f:                                   [31m│[0m
+[31m│[0m [31m❱ [0m17 [2m│   │   [0mconfig = [1;4myaml.safe_load(f)[0m                                      [31m│[0m
+[31m│[0m   [2m18 [0m[2m│   [0m[94mreturn[0m config                                                       [31m│[0m
+[31m│[0m   [2m19 [0m                                                                        [31m│[0m
+[31m│[0m   [2m20 [0m[1;95m@app[0m.command()                                                          [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m [34m╭─[0m[34m────────────────────────────────[0m[34m locals [0m[34m────────────────────────────────[0m[34m─╮[0m [31m│[0m
+[31m│[0m [34m│[0m [3;33mconfig_path[0m[31m =[0m [32m'config/full_experiment.yaml'[0m                              [34m│[0m [31m│[0m
+[31m│[0m [34m│[0m           [3;33mf[0m[31m =[0m [1m<[0m[1;95m_io.TextIOWrapper[0m[39m [0m[33mname[0m[39m=[0m[32m'config/full_experiment.yaml'[0m[39m [0m     [34m│[0m [31m│[0m
+[31m│[0m [34m│[0m               [33mmode[0m[39m=[0m[32m'r'[0m[39m [0m[33mencoding[0m[39m=[0m[32m'UTF-8'[0m[1m>[0m                                 [34m│[0m [31m│[0m
+[31m│[0m [34m╰──────────────────────────────────────────────────────────────────────────╯[0m [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m [2m/home/toma/pt-80-1-a-13/_work/experiment_matsuzawa_250918/experiment_matsuza[0m [31m│[0m
+[31m│[0m [2mwa_250918/.venv/lib/python3.11/site-packages/yaml/[0m[1m__init__.py[0m:125 in         [31m│[0m
+[31m│[0m safe_load                                                                    [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m   [2m122 [0m[2;33m│   [0m[33mResolve only basic YAML tags. This is known[0m                        [31m│[0m
+[31m│[0m   [2m123 [0m[2;33m│   [0m[33mto be safe for untrusted input.[0m                                    [31m│[0m
+[31m│[0m   [2m124 [0m[2;33m│   [0m[33m"""[0m                                                                [31m│[0m
+[31m│[0m [31m❱ [0m125 [2m│   [0m[94mreturn[0m [1;4mload(stream, SafeLoader)[0m                                    [31m│[0m
+[31m│[0m   [2m126 [0m                                                                       [31m│[0m
+[31m│[0m   [2m127 [0m[94mdef[0m[90m [0m[92msafe_load_all[0m(stream):                                             [31m│[0m
+[31m│[0m   [2m128 [0m[2;90m│   [0m[33m"""[0m                                                                [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m [34m╭─[0m[34m────────────────────────────────[0m[34m locals [0m[34m────────────────────────────────[0m[34m─╮[0m [31m│[0m
+[31m│[0m [34m│[0m [3;33mstream[0m[31m =[0m [1m<[0m[1;95m_io.TextIOWrapper[0m[39m [0m[33mname[0m[39m=[0m[32m'config/full_experiment.yaml'[0m[39m [0m[33mmode[0m[39m=[0m[32m'r'[0m[39m [0m [34m│[0m [31m│[0m
+[31m│[0m [34m│[0m          [33mencoding[0m[39m=[0m[32m'UTF-8'[0m[1m>[0m                                               [34m│[0m [31m│[0m
+[31m│[0m [34m╰──────────────────────────────────────────────────────────────────────────╯[0m [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m [2m/home/toma/pt-80-1-a-13/_work/experiment_matsuzawa_250918/experiment_matsuza[0m [31m│[0m
+[31m│[0m [2mwa_250918/.venv/lib/python3.11/site-packages/yaml/[0m[1m__init__.py[0m:79 in load     [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m   [2m 76 [0m[2;33m│   [0m[33mParse the first YAML document in a stream[0m                          [31m│[0m
+[31m│[0m   [2m 77 [0m[2;33m│   [0m[33mand produce the corresponding Python object.[0m                       [31m│[0m
+[31m│[0m   [2m 78 [0m[2;33m│   [0m[33m"""[0m                                                                [31m│[0m
+[31m│[0m [31m❱ [0m 79 [2m│   [0mloader = [1;4mLoader(stream)[0m                                            [31m│[0m
+[31m│[0m   [2m 80 [0m[2m│   [0m[94mtry[0m:                                                               [31m│[0m
+[31m│[0m   [2m 81 [0m[2m│   │   [0m[94mreturn[0m loader.get_single_data()                                [31m│[0m
+[31m│[0m   [2m 82 [0m[2m│   [0m[94mfinally[0m:                                                           [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m [34m╭─[0m[34m────────────────────────────────[0m[34m locals [0m[34m────────────────────────────────[0m[34m─╮[0m [31m│[0m
+[31m│[0m [34m│[0m [3;33mstream[0m[31m =[0m [1m<[0m[1;95m_io.TextIOWrapper[0m[39m [0m[33mname[0m[39m=[0m[32m'config/full_experiment.yaml'[0m[39m [0m[33mmode[0m[39m=[0m[32m'r'[0m[39m [0m [34m│[0m [31m│[0m
+[31m│[0m [34m│[0m          [33mencoding[0m[39m=[0m[32m'UTF-8'[0m[1m>[0m                                               [34m│[0m [31m│[0m
+[31m│[0m [34m╰──────────────────────────────────────────────────────────────────────────╯[0m [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m [2m/home/toma/pt-80-1-a-13/_work/experiment_matsuzawa_250918/experiment_matsuza[0m [31m│[0m
+[31m│[0m [2mwa_250918/.venv/lib/python3.11/site-packages/yaml/[0m[1mloader.py[0m:34 in __init__   [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m   [2m31 [0m[94mclass[0m[90m [0m[4;92mSafeLoader[0m(Reader, Scanner, Parser, Composer, SafeConstructor, Re [31m│[0m
+[31m│[0m   [2m32 [0m[2m│   [0m                                                                    [31m│[0m
+[31m│[0m   [2m33 [0m[2m│   [0m[94mdef[0m[90m [0m[92m__init__[0m([96mself[0m, stream):                                         [31m│[0m
+[31m│[0m [31m❱ [0m34 [2m│   │   [0m[1;4mReader.[0m[1;4;92m__init__[0m[1;4m([0m[1;4;96mself[0m[1;4m, stream)[0m                                   [31m│[0m
+[31m│[0m   [2m35 [0m[2m│   │   [0mScanner.[92m__init__[0m([96mself[0m)                                          [31m│[0m
+[31m│[0m   [2m36 [0m[2m│   │   [0mParser.[92m__init__[0m([96mself[0m)                                           [31m│[0m
+[31m│[0m   [2m37 [0m[2m│   │   [0mComposer.[92m__init__[0m([96mself[0m)                                         [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m [34m╭─[0m[34m────────────────────────────────[0m[34m locals [0m[34m────────────────────────────────[0m[34m─╮[0m [31m│[0m
+[31m│[0m [34m│[0m   [3;33mself[0m[31m =[0m [1m<[0m[1;95myaml.loader.SafeLoader[0m[39m object at [0m[1;36m0x1477b81c8650[0m[1m>[0m               [34m│[0m [31m│[0m
+[31m│[0m [34m│[0m [3;33mstream[0m[31m =[0m [1m<[0m[1;95m_io.TextIOWrapper[0m[39m [0m[33mname[0m[39m=[0m[32m'config/full_experiment.yaml'[0m[39m [0m[33mmode[0m[39m=[0m[32m'r'[0m[39m [0m [34m│[0m [31m│[0m
+[31m│[0m [34m│[0m          [33mencoding[0m[39m=[0m[32m'UTF-8'[0m[1m>[0m                                               [34m│[0m [31m│[0m
+[31m│[0m [34m╰──────────────────────────────────────────────────────────────────────────╯[0m [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m [2m/home/toma/pt-80-1-a-13/_work/experiment_matsuzawa_250918/experiment_matsuza[0m [31m│[0m
+[31m│[0m [2mwa_250918/.venv/lib/python3.11/site-packages/yaml/[0m[1mreader.py[0m:85 in __init__   [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m   [2m 82 [0m[2m│   │   │   [0m[96mself[0m.name = [96mgetattr[0m(stream, [33m'[0m[33mname[0m[33m'[0m, [33m"[0m[33m<file>[0m[33m"[0m)              [31m│[0m
+[31m│[0m   [2m 83 [0m[2m│   │   │   [0m[96mself[0m.eof = [94mFalse[0m                                           [31m│[0m
+[31m│[0m   [2m 84 [0m[2m│   │   │   [0m[96mself[0m.raw_buffer = [94mNone[0m                                     [31m│[0m
+[31m│[0m [31m❱ [0m 85 [2m│   │   │   [0m[1;4;96mself[0m[1;4m.determine_encoding()[0m                                  [31m│[0m
+[31m│[0m   [2m 86 [0m[2m│   [0m                                                                   [31m│[0m
+[31m│[0m   [2m 87 [0m[2m│   [0m[94mdef[0m[90m [0m[92mpeek[0m([96mself[0m, index=[94m0[0m):                                           [31m│[0m
+[31m│[0m   [2m 88 [0m[2m│   │   [0m[94mtry[0m:                                                           [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m [34m╭─[0m[34m────────────────────────────────[0m[34m locals [0m[34m────────────────────────────────[0m[34m─╮[0m [31m│[0m
+[31m│[0m [34m│[0m   [3;33mself[0m[31m =[0m [1m<[0m[1;95myaml.loader.SafeLoader[0m[39m object at [0m[1;36m0x1477b81c8650[0m[1m>[0m               [34m│[0m [31m│[0m
+[31m│[0m [34m│[0m [3;33mstream[0m[31m =[0m [1m<[0m[1;95m_io.TextIOWrapper[0m[39m [0m[33mname[0m[39m=[0m[32m'config/full_experiment.yaml'[0m[39m [0m[33mmode[0m[39m=[0m[32m'r'[0m[39m [0m [34m│[0m [31m│[0m
+[31m│[0m [34m│[0m          [33mencoding[0m[39m=[0m[32m'UTF-8'[0m[1m>[0m                                               [34m│[0m [31m│[0m
+[31m│[0m [34m╰──────────────────────────────────────────────────────────────────────────╯[0m [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m [2m/home/toma/pt-80-1-a-13/_work/experiment_matsuzawa_250918/experiment_matsuza[0m [31m│[0m
+[31m│[0m [2mwa_250918/.venv/lib/python3.11/site-packages/yaml/[0m[1mreader.py[0m:135 in           [31m│[0m
+[31m│[0m determine_encoding                                                           [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m   [2m132 [0m[2m│   │   │   [0m[94melse[0m:                                                      [31m│[0m
+[31m│[0m   [2m133 [0m[2m│   │   │   │   [0m[96mself[0m.raw_decode = codecs.utf_8_decode                  [31m│[0m
+[31m│[0m   [2m134 [0m[2m│   │   │   │   [0m[96mself[0m.encoding = [33m'[0m[33mutf-8[0m[33m'[0m                                [31m│[0m
+[31m│[0m [31m❱ [0m135 [2m│   │   [0m[1;4;96mself[0m[1;4m.update([0m[1;4;94m1[0m[1;4m)[0m                                                 [31m│[0m
+[31m│[0m   [2m136 [0m[2m│   [0m                                                                   [31m│[0m
+[31m│[0m   [2m137 [0m[2m│   [0mNON_PRINTABLE = re.compile([33m'[0m[33m[^[0m[33m\x09[0m[33m\x0A[0m[33m\x0D[0m[33m\x20[0m[33m-[0m[33m\x7E[0m[33m\x85[0m[33m\xA0[0m[33m-[0m[33m\uD7FF[0m [31m│[0m
+[31m│[0m   [2m138 [0m[2m│   [0m[94mdef[0m[90m [0m[92mcheck_printable[0m([96mself[0m, data):                                   [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m [34m╭─[0m[34m────────────────────────[0m[34m locals [0m[34m────────────────────────[0m[34m─╮[0m                 [31m│[0m
+[31m│[0m [34m│[0m [3;33mself[0m[31m =[0m [1m<[0m[1;95myaml.loader.SafeLoader[0m[39m object at [0m[1;36m0x1477b81c8650[0m[1m>[0m [34m│[0m                 [31m│[0m
+[31m│[0m [34m╰──────────────────────────────────────────────────────────╯[0m                 [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m [2m/home/toma/pt-80-1-a-13/_work/experiment_matsuzawa_250918/experiment_matsuza[0m [31m│[0m
+[31m│[0m [2mwa_250918/.venv/lib/python3.11/site-packages/yaml/[0m[1mreader.py[0m:169 in update    [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m   [2m166 [0m[2m│   │   │   [0m[94melse[0m:                                                      [31m│[0m
+[31m│[0m   [2m167 [0m[2m│   │   │   │   [0mdata = [96mself[0m.raw_buffer                                 [31m│[0m
+[31m│[0m   [2m168 [0m[2m│   │   │   │   [0mconverted = [96mlen[0m(data)                                  [31m│[0m
+[31m│[0m [31m❱ [0m169 [2m│   │   │   [0m[1;4;96mself[0m[1;4m.check_printable(data)[0m                                 [31m│[0m
+[31m│[0m   [2m170 [0m[2m│   │   │   [0m[96mself[0m.buffer += data                                        [31m│[0m
+[31m│[0m   [2m171 [0m[2m│   │   │   [0m[96mself[0m.raw_buffer = [96mself[0m.raw_buffer[converted:]              [31m│[0m
+[31m│[0m   [2m172 [0m[2m│   │   │   [0m[94mif[0m [96mself[0m.eof:                                               [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m [34m╭─[0m[34m────────────────────────────────[0m[34m locals [0m[34m────────────────────────────────[0m[34m─╮[0m [31m│[0m
+[31m│[0m [34m│[0m [3;33mconverted[0m[31m =[0m [1;36m3687[0m                                                         [34m│[0m [31m│[0m
+[31m│[0m [34m│[0m      [3;33mdata[0m[31m =[0m [32m'run_name: "full_experiment_fast_la_tta"\nseed: 42\ndevice: [0m [34m│[0m [31m│[0m
+[31m│[0m [34m│[0m             [32m"cuda"\noutput_dir: ".re'[0m+[1;36m3607[0m                               [34m│[0m [31m│[0m
+[31m│[0m [34m│[0m    [3;33mlength[0m[31m =[0m [1;36m1[0m                                                            [34m│[0m [31m│[0m
+[31m│[0m [34m│[0m      [3;33mself[0m[31m =[0m [1m<[0m[1;95myaml.loader.SafeLoader[0m[39m object at [0m[1;36m0x1477b81c8650[0m[1m>[0m            [34m│[0m [31m│[0m
+[31m│[0m [34m╰──────────────────────────────────────────────────────────────────────────╯[0m [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m [2m/home/toma/pt-80-1-a-13/_work/experiment_matsuzawa_250918/experiment_matsuza[0m [31m│[0m
+[31m│[0m [2mwa_250918/.venv/lib/python3.11/site-packages/yaml/[0m[1mreader.py[0m:143 in           [31m│[0m
+[31m│[0m check_printable                                                              [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m   [2m140 [0m[2m│   │   [0m[94mif[0m match:                                                      [31m│[0m
+[31m│[0m   [2m141 [0m[2m│   │   │   [0mcharacter = match.group()                                  [31m│[0m
+[31m│[0m   [2m142 [0m[2m│   │   │   [0mposition = [96mself[0m.index+([96mlen[0m([96mself[0m.buffer)-[96mself[0m.pointer)+matc [31m│[0m
+[31m│[0m [31m❱ [0m143 [2m│   │   │   [0m[1;4;94mraise[0m[1;4m ReaderError([0m[1;4;96mself[0m[1;4m.name, position, [0m[1;4;96mord[0m[1;4m(character),[0m     [31m│[0m
+[31m│[0m   [2m144 [0m[2m│   │   │   │   │   [0m[1;4;33m'[0m[1;4;33municode[0m[1;4;33m'[0m[1;4m, [0m[1;4;33m"[0m[1;4;33mspecial characters are not allowed[0m[1;4;33m"[0m[1;4m)[0m   [31m│[0m
+[31m│[0m   [2m145 [0m[2m│   [0m                                                                   [31m│[0m
+[31m│[0m   [2m146 [0m[2m│   [0m[94mdef[0m[90m [0m[92mupdate[0m([96mself[0m, length):                                          [31m│[0m
+[31m│[0m                                                                              [31m│[0m
+[31m│[0m [34m╭─[0m[34m────────────────────────────────[0m[34m locals [0m[34m────────────────────────────────[0m[34m─╮[0m [31m│[0m
+[31m│[0m [34m│[0m [3;33mcharacter[0m[31m =[0m [32m'\x08'[0m                                                       [34m│[0m [31m│[0m
+[31m│[0m [34m│[0m      [3;33mdata[0m[31m =[0m [32m'run_name: "full_experiment_fast_la_tta"\nseed: 42\ndevice: [0m [34m│[0m [31m│[0m
+[31m│[0m [34m│[0m             [32m"cuda"\noutput_dir: ".re'[0m+[1;36m3607[0m                               [34m│[0m [31m│[0m
+[31m│[0m [34m│[0m     [3;33mmatch[0m[31m =[0m [1m<[0m[1;95mre.Match[0m[39m object; [0m[33mspan[0m[39m=[0m[1;39m([0m[1;36m522[0m[39m, [0m[1;36m523[0m[1;39m)[0m[39m, [0m[33mmatch[0m[39m=[0m[32m'\x08'[0m[1m>[0m             [34m│[0m [31m│[0m
+[31m│[0m [34m│[0m  [3;33mposition[0m[31m =[0m [1;36m522[0m                                                          [34m│[0m [31m│[0m
+[31m│[0m [34m│[0m      [3;33mself[0m[31m =[0m [1m<[0m[1;95myaml.loader.SafeLoader[0m[39m object at [0m[1;36m0x1477b81c8650[0m[1m>[0m            [34m│[0m [31m│[0m
+[31m│[0m [34m╰──────────────────────────────────────────────────────────────────────────╯[0m [31m│[0m
+[31m╰──────────────────────────────────────────────────────────────────────────────╯[0m
+[1;91mReaderError: [0munacceptable character #x0008: special characters are not allowed
+  in [32m"config/full_experiment.yaml"[0m, position [1;36m522[0m
