@@ -19,7 +19,7 @@ training:
 evaluation:
   enabled: true
   experiments:
-    # EXPERIMENT 1 0 Streaming Real-Time Slack Coupling Test
+    # EXPERIMENT 1 0 Streaming Real-Time Slack Coupling Test
     - name: "exp1_slack_coupling_resnet50_eta1.0_load0.3"
       eval_steps: None # Run on the full dataset
       seed: 42
@@ -60,7 +60,7 @@ evaluation:
         enabled: true
         epsilon: 0.04
     
-    # EXPERIMENT 2 0 Cross-Layer Offset Ablation
+    # EXPERIMENT 2 0 Cross-Layer Offset Ablation
     - name: "exp2_ablation_vit_full"
       eval_steps: null
       seed: 42
@@ -114,7 +114,7 @@ evaluation:
         enabled: true
         epsilon: 0.04
 
-    # EXPERIMENT 3 0 Long-Horizon Stability & Certificate Validation
+    # EXPERIMENT 3 0 Long-Horizon Stability & Certificate Validation
     - name: "exp3_stability_cert_ON"
       eval_steps: null
       seed: 42
