@@ -112,7 +112,7 @@ class SyntheticDataset(Dataset):
     def __getitem__(self, idx):
         image = torch.randn(3, *self.img_size)
         label = torch.randint(0, self.num_classes, (1,)).item()
-        return {'image': image, 'label': label}
+        return image, label
 
 def get_data_stream(config, backbone_name):
     name = config['name']

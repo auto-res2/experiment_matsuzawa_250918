@@ -79,6 +79,11 @@ class MultiGranularHyperAdapter(nn.Module):
                 # Target the second pointwise convolution's weight
                 info['conv_params'] += 1
                 info['conv_layers'].append(f"{name}.conv_dw")
+        # Ensure all required keys are present
+        info.setdefault('norm_params', 0)
+        info.setdefault('attn_params', 0)
+        info.setdefault('conv_params', 0)
+        
         return dict(info)
 
     def forward(self, stats):
@@ -263,8 +268,8 @@ def train_scheduler(config):
             offsets = model.adapter(stats)
             
             # Simulate latency based on J (simple linear model)
-            latency_penalty = train_config['hyperparameters']['lambda'] * (J / model.K)
-            reward = confidence.mean() - latency_penalty.float()
+            latency_penalty = train_config['hyperparameters']['lambda'] * (J.float() / model.K)
+            reward = confidence.mean() - latency_penalty.mean()
             total_reward += reward.item()
 
             # 4. PPO-style update
